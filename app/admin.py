@@ -1,3 +1,6 @@
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+
 from app import app, db, dao, utils
 from utils import datetime_f
 from flask_admin import Admin, expose
@@ -64,9 +67,29 @@ class LapLichView(AuthenticatedBaseView):
         list_sanbay = dao.load_sanbay()
         return self.render('employee/laplich.html', sanbays=list_sanbay)
 
+class SanBayView(ModelView, AuthenticatedBaseView_Admin):
+    can_create = True
+    can_edit = True
+    can_view_details = True
+    form_excluded_columns = ['chuyen_bay', 'chi_tiet_cb']
+
+class TicketView(AuthenticatedBaseView):
+    can_create = False
+    can_edit = False
+
+    @expose('/', methods=["GET", "POST"])
+    def index(self):
+        tickets = dao.get_ticket_by_datetime()
+        if request.method.__eq__('GET'):
+            date = request.args.get('date')
+            tickets = dao.get_ticket_by_datetime(date)
+        return self.render('employee/ticket.html', tickets=tickets)
+
 
 admin.add_view(UserView(User, db.session, name='User'))
 admin.add_view(ChuyenBayView(ChuyenBay, db.session, name='Chuyến Bay'))
 admin.add_view(LogoutView(name='Log out'))
 admin.add_view(StatsView(name='Thống kê báo cáo'))
 admin.add_view(LapLichView(name='Lâp lịch Chuyến Bay'))
+admin.add_view(SanBayView(session=db.session, name='Sân Bay', model=SanBay))
+admin.add_view(TicketView(name='Danh sách vé'))

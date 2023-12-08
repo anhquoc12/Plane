@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from flask_login import UserMixin
 from app import db, app
 from enum import Enum as UserEnum
-
+import random
 
 class UserRole(UserEnum):
     ADMIN = 1
@@ -73,6 +73,11 @@ class Ve(BaseMoDel):
     GiaVe = Column(Float, nullable=False)
     ngay_xuat_ve = Column(DateTime, default=datetime.now())
 
+    khach_hang = relationship("Customer", backref="ve")
+    ten_chuyen_bay = relationship("ChuyenBay", backref="chuyenbay")
+    hang = relationship("HangVe", backref="hangve")
+    chair = relationship("Ghe", backref="ghe")
+
     def __str__(self):
         return str(self.id)
 
@@ -132,6 +137,7 @@ class User(BaseMoDel, UserMixin):
 
 if __name__ == '__main__':
     with app.app_context():
+        print('Test')
         # db.create_all()
         # user admin
         # import hashlib
@@ -169,41 +175,41 @@ if __name__ == '__main__':
         # db.session.commit()
 
         #Lập lịch chuyê bay
-        while True:
-            print('Nhap ngay khoi hanh:')
-            day = int(input('day = '))
-            month = int(input('month = '))
-            year = int(input('year = '))
-            hour = int(input('hour = '))
-            minute = int(input('minute = '))
-            thoi_gian_khoi_hanh = datetime(year=year, month=month, day=day, hour=hour, minute=minute)
-            print('Nhap thoi gian bay')
-            hour = int(input('hour = '))
-            minute = int(input('minute = '))
-            thoigianbay = timedelta(hours=hour, minutes=minute)
-            giave1 = float(input('Nhap gia ve 1: '))
-            giave2 = float(input('Nhap gia ve 2: '))
-            print('Chi tiet san bay')
-            sb1 = SanBay.query.get(int(input('Ma san bay di: ')))
-            sb2 = SanBay.query.get(int(input('Ma san bay den: ')))
-            name = sb1.ten_San_bay + ' - ' + sb2.ten_San_bay
-            c = ChuyenBay(ten_chuyen_bay=name, tg_khoihanh=thoi_gian_khoi_hanh,
-                          tg_bay=thoigianbay, giave_hv1=giave1, giave_hv2=giave2, id_nv=2)
-            db.session.add(c)
-            db.session.commit()
-            c.san_bay.append(sb1)
-            c.san_bay.append(sb2)
-            db.session.add(c)
-            print('Chi tiet san bay trung gian')
-            count = int(input('So luong san bay trung gian: '))
-            while count > 0:
-                id_sanbay = int(input('Nhap ma san bay trung gian: '))
-                thoigiandung = int(input('Thoi gian dung: '))
-                sbtg = ChiTietSBTG(id_sanbay_tg=id_sanbay, id_chuyenbay=c.id,
-                                   tg_dung=timedelta(minutes=thoigiandung))
-                db.session.add(sbtg)
-                count = count - 1
-            db.session.commit()
-            print('Luu thanh cong')
-            if input('Tiep tuc? (Y/N): ') == 'N':
-                break
+        # while True:
+        #     print('Nhap ngay khoi hanh:')
+        #     day = int(random.randint(1, 28))
+        #     month = int(random.randint(1, 12))
+        #     year = 2020
+        #     hour = int(random.randint(0, 23))
+        #     minute = 0
+        #     thoi_gian_khoi_hanh = datetime(year=year, month=month, day=day, hour=hour, minute=minute)
+        #     print('Nhap thoi gian bay')
+        #     hour = int(random.randint(1, 24))
+        #     minute = 30 if int(random.randint(1, 100)) % 2 is not 0 else 0
+        #     thoigianbay = timedelta(hours=hour, minutes=minute)
+        #     giave1 = float(int(random.randint(100, 500)) * 10**4)
+        #     giave2 = giave1 * 1.5
+        #     print('Chi tiet san bay')
+        #     sb1 = SanBay.query.get(int(random.randint(1, 7)))
+        #     sb2 = SanBay.query.get(1 if int(random.randint(1, 7)) + 1 > 7 else int(random.randint(1, 7)) + 1)
+        #     name = sb1.ten_San_bay + ' - ' + sb2.ten_San_bay
+        #     c = ChuyenBay(ten_chuyen_bay=name, tg_khoihanh=thoi_gian_khoi_hanh,
+        #                   tg_bay=thoigianbay, giave_hv1=giave1, giave_hv2=giave2, id_nv=2)
+        #     db.session.add(c)
+        #     db.session.commit()
+        #     c.san_bay.append(sb1)
+        #     c.san_bay.append(sb2)
+        #     db.session.add(c)
+        #     print('Chi tiet san bay trung gian')
+        #     count = random.randint(0, 2)
+        #     while count > 0:
+        #         id_sanbay = int(input('Nhap ma san bay trung gian: '))
+        #         thoigiandung = 30
+        #         sbtg = ChiTietSBTG(id_sanbay_tg=id_sanbay, id_chuyenbay=c.id,
+        #                            tg_dung=timedelta(minutes=thoigiandung))
+        #         db.session.add(sbtg)
+        #         count = count - 1
+        #     db.session.commit()
+        #     print('Luu thanh cong')
+        #     if input('Tiep tuc? (Y/N): ') == 'N':
+        #         break

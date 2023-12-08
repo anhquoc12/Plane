@@ -1,3 +1,4 @@
+
 datetime_f = '%Y-%m-%d %H:%M'
 
 def str_datetime(date):

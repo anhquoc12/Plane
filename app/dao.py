@@ -220,8 +220,15 @@ def cb_stats(kw=None, from_date=None, to_date=None):
     .group_by(ChuyenBay.id, ChuyenBay.ten_chuyen_bay)
      return cb.all()
 
-# if __name__ == '__main__':
-#     with app.app_context():
+def get_ticket_by_datetime(dateS=None):
+    datev = datetime.now()
+    if dateS is None:
+        date = datetime.now().date()
+    return Ve.query.filter(func.date(Ve.ngay_xuat_ve).__eq__(dateS)).all()
+
+if __name__ == '__main__':
+    with app.app_context():
+        print(get_ticket_by_datetime(datetime(year=2020, month=6, day=25)))
         # t = db.session.query(func(Ve.GiaVe)).join(Ve, Ve.id_chuyenbay.__eq__(ChuyenBay.id))\
         #     .filter(extract('month', Ve.ngay_xuat_ve) == 2,
         #                                             extract('year', Ve.ngay_xuat_ve) == 2023).all()

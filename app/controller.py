@@ -90,7 +90,7 @@ def luu_ve():
         ve = dao.add_ve_Onine(id_cb=chuyenbay.id, id_kh=id_customer, id_hv=id_hv,
                               id_ghe=chair, gv=price, ngay_xuatve=chuyenbay.tg_khoihanh)
         if ve:
-            return 'Đặt vé thành công'
+            return home()
         else:
             return 'Vui lòng thử lại'
 
@@ -156,6 +156,13 @@ def lap_lich_CB():
             dao.add_sanbaytg(sanbay=sbtg2, time_stop=tg_dung__sbtg2,
                          ghichu=ghichu__sbtg2)
         return render_template('employee/success.html')
+
+def load_ticket():
+    if request.method.__eq__('GET'):
+        date = request.args['date']
+        date_ticket = datetime.strptime(date, '%Y-%m-%d')
+        return render_template('employee/ticket.html', tickets=dao.get_ticket_by_datetime(date_ticket))
+
 
 
 
