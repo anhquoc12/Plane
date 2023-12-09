@@ -1,4 +1,7 @@
-from app import app, login, dao, utils, models, db
+import random
+
+from app import app, login, dao, utils, models, db, settings
+from app.vnpay import vnpay
 from utils import datetime_f
 from flask import render_template, url_for, request, redirect
 from flask_login import login_user, logout_user
@@ -87,12 +90,18 @@ def luu_ve():
             price = chuyenbay.giave_hv2
             chair = int(request.form['chair_2'])
             # return str(chair)
-        ve = dao.add_ve_Onine(id_cb=chuyenbay.id, id_kh=id_customer, id_hv=id_hv,
-                              id_ghe=chair, gv=price, ngay_xuatve=chuyenbay.tg_khoihanh)
-        if ve:
-            return home()
-        else:
-            return 'Vui lòng thử lại'
+        n = random.randint(10 ** 11, 10 ** 12 - 1)
+        n_str = str(n).join(datetime.now().strftime('%Y%m%d%H%M%S'))
+        print(price)
+        url = utils.vnpt_payment(int(price), f'Thanh Toán tiền vé của chuyến bay {chuyenbay.ten_chuyen_bay}',
+                           n_str, ip=request.remote_addr, cb_id=str(chuyenbay.id))
+        return redirect(url)
+        # ve = dao.add_ve_Onine(id_cb=chuyenbay.id, id_kh=id_customer, id_hv=id_hv,
+        #                       id_ghe=chair, gv=price, ngay_xuatve=chuyenbay.tg_khoihanh)
+        # if ve:
+        #     return home()
+        # else:
+        #     return 'Vui lòng thử lại'
 
 
     # else:
@@ -162,6 +171,21 @@ def load_ticket():
         date = request.args['date']
         date_ticket = datetime.strptime(date, '%Y-%m-%d')
         return render_template('employee/ticket.html', tickets=dao.get_ticket_by_datetime(date_ticket))
+
+def payment_view():
+    if request.method.__eq__('GET'):
+        result = utils.payment_return(request.args)
+        # Nếu thành công thì thêm vào
+        if result['status'] == 1:
+            db.session.commit()
+        else:
+            db.session.rollback()
+        return render_template('payment_return.html', result = result)
+    else:
+        return render_template('payment_return.html')
+
+        # Redirect to VNPAY
+
 
 
 

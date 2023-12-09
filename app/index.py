@@ -11,6 +11,7 @@ app.add_url_rule('/datve/id=<int:chuyenbay_id>', 'dat_ve', controller.dat_ve)
 app.add_url_rule('/admin-login', 'admin_login', controller.admin_login, methods=['post'])
 app.add_url_rule('/laplich', 'lap_lich_CB', controller.lap_lich_CB, methods=['GET', 'post'])
 app.add_url_rule('/luuve', 'luu_ve', controller.luu_ve, methods=['post'])
+app.add_url_rule('/payment', 'payment_view', controller.payment_view)
 
 if __name__ == '__main__':
     from app.admin import *

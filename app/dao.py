@@ -181,8 +181,6 @@ def get_ghe_by_so_ghe(so_ghe):
 def add_ve_Onine(id_cb, id_kh, id_hv, id_ghe, gv, ngay_xuatve):
     ve = Ve(id_chuyenbay=id_cb, id_khach_hang=id_kh, id_hangve=id_hv, id_ghe=id_ghe, GiaVe=gv, ngay_xuat_ve=ngay_xuatve)
     db.session.add(ve)
-    db.session.commit()
-    return True
 
 
 def add_kh(name, cccd, sdt):
